@@ -26,3 +26,34 @@ barplot(go, split="ONTOLOGY")+ facet_grid(ONTOLOGY~., scale="free")+
 go=DOSE::setReadable(go, OrgDb='org.Hs.eg.db',keyType='ENTREZID')
 write.csv( go@result,file = 'gene_down_GO_all_barplot.csv')
 
+gene_up <- AnnotationDbi::select(org.Hs.eg.db, keys=gene_up$gene, columns=c("ENTREZID","SYMBOL"), keytype="SYMBOL")
+GO_up <- enrichGO(gene = gene_up$ENTREZID,
+                 OrgDb = org.Hs.eg.db,
+                 keyType = "ENTREZID",
+                 ont = "ALL",
+                 pAdjustMethod = "BH",
+                 pvalueCutoff = 0.01,
+                 qvalueCutoff = 0.05,
+                 readable      = TRUE)
+up_bp <- GO_up[which(GO_up$ONTOLOGY == "BP"),]
+up_mf <- GO_up[which(GO_up$ONTOLOGY == "MF"),]
+
+gene_down <- AnnotationDbi::select(org.Hs.eg.db, keys=gene_down$gene, columns=c("ENTREZID","SYMBOL"), keytype="SYMBOL")
+GO_down <- enrichGO(gene = gene_down$ENTREZID,
+                 OrgDb = org.Hs.eg.db,
+                 keyType = "ENTREZID",
+                 ont = "ALL",
+                 pAdjustMethod = "BH",
+                 pvalueCutoff = 0.01,
+                 qvalueCutoff = 0.05,
+                 readable      = TRUE)
+down_bp <- GO_down[which(GO_down$ONTOLOGY == "BP"),]
+down_mf <- GO_down[which(GO_down$ONTOLOGY == "MF"),]
+merge_result(list(up_bp = up_bp,up_mf = up_mf,down_bp =down_bp, down_mf = down_mf)) %>%
+  clusterProfiler::dotplot(.,showCategory=20)
+  
+  
+
+
+
+
