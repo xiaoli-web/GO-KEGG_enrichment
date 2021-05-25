@@ -1,0 +1,28 @@
+gene_up <- rownames(deg[deg$avg_logFC>0,])
+gene_down <- rownames(deg[deg$avg_logFC<0,])
+library(org.Hs.eg.db)
+gene_up <- as.character(na.omit(AnnotationDbi::select(org.Hs.eg.db,
+                                                      key = gene_up,
+                                                      columns = ""ENTREZID",
+                                                      keytype = "SYMBOL")[,2]))
+gene_up <- as.character(na.omit(AnnotationDbi::select(org.Hs.eg.db,
+                                                      key = gene_up,
+                                                      columns = ""ENTREZID",
+                                                      keytype = "SYMBOL")[,2]))
+                                                      
+library(clusterProfiler)
+library(ggplot2)
+library(stringr)
+go <- enrichGO(gene_up, OrgDb = "org.Hs.eg.db", ont = "all"
+
+barplot(go, split="ONTOLOGY")+ facet_grid(ONTOLOGY~., scale="free")+ 
+  ggsave('gene_up_GO_all_barplot.png') 
+go=DOSE::setReadable(go, OrgDb='org.Hs.eg.db',keyType='ENTREZID')
+write.csv( go@result,file = 'gene_up_GO_all_barplot.csv')
+
+go <- enrichGO(gene_down, OrgDb = "org.Hs.eg.db", ont="all") 
+barplot(go, split="ONTOLOGY")+ facet_grid(ONTOLOGY~., scale="free")+ 
+  ggsave('gene_down_GO_all_barplot.png') 
+go=DOSE::setReadable(go, OrgDb='org.Hs.eg.db',keyType='ENTREZID')
+write.csv( go@result,file = 'gene_down_GO_all_barplot.csv')
+
